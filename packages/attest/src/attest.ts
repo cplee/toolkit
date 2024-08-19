@@ -32,6 +32,8 @@ export type AttestOptions = {
   headers?: {[header: string]: string | number | undefined}
   // Whether to skip writing the attestation to the GH attestations API.
   skipWrite?: boolean
+  // Private URL for Rekor Server
+  rekorURL?: string
 }
 
 /**
@@ -58,6 +60,9 @@ export async function attest(options: AttestOptions): Promise<Attestation> {
     type: INTOTO_PAYLOAD_TYPE
   }
   const endpoints = signingEndpoints(options.sigstore)
+  if (options.rekorURL) {
+    endpoints.rekorURL = options.rekorURL
+  }
   const bundle = await signPayload(payload, endpoints)
 
   // Store the attestation
